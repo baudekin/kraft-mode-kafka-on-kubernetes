@@ -4,40 +4,12 @@ metadata:
   name: kafka-kraft
 ---
 apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: kafka-pv-volume
-  labels:
-    type: local
-spec:
-  storageClassName: manual
-  capacity:
-    storage: 10Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: '/mnt/data'
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: kafka-pv-claim
-  namespace: kafka-kraft
-spec:
-  storageClassName: manual
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 3Gi
----
-apiVersion: v1
 kind: Service
 metadata:
   name: kafka-svc
   labels:
     app: kafka-app
-  namespace: kafka-kraft
+  #namespace: kafka-kraft
 spec:
   clusterIP: None
   ports:
@@ -54,7 +26,7 @@ metadata:
   name: kafka
   labels:
     app: kafka-app
-  namespace: kafka-kraft
+  #namespace: kafka-kraft
 spec:
   serviceName: kafka-svc
   replicas: 3
@@ -72,19 +44,31 @@ spec:
             claimName: kafka-pv-claim
       containers:
         - name: kafka-container
-          image: docker_username/kafka-kraft
+          image: mbodkin/kafka:1.0.17
           ports:
             - containerPort: 9092
             - containerPort: 9093
           env:
+            - name: CLUSTER_ID
+              value: 'mNvZdBzpR3KCdx-uEAwaEQ'
             - name: REPLICAS
               value: '3'
             - name: SERVICE
               value: kafka-svc
             - name: NAMESPACE
               value: kafka-kraft
-            - name: SHARE_DIR
-              value: /mnt/kafka
+            - name: LOG_DIR
+              value: /home/kafka/kraft-combined-logs
           volumeMounts:
             - name: kafka-storage
-              mountPath: /mnt/kafka
+              mountPath: /home/kafka/kraft-combined-logs
+  volumeClaimTemplates:
+  - metadata:
+      name: kafka-storage
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+      storageClassName: hostpath
