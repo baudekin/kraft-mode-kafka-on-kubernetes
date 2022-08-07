@@ -1,23 +1,29 @@
 #!/bin/bash
 
 NODE_ID=${HOSTNAME:6}
-LISTENERS="PLAINTEXT://:9092,CONTROLLER://:9093"
+LISTENERS_BROKER_CONTROLLER="PLAINTEXT://:9092,CONTROLLER://:9093"
+LISTENERS_BROKER_ONLY="PLAINTEXT://:9092"
 ADVERTISED_LISTENERS="PLAINTEXT://kafka-$NODE_ID.$SERVICE.$NAMESPACE.svc.cluster.local:9092"
 
-CONTROLLER_QUORUM_VOTERS=""
-for i in $( seq 0 $REPLICAS); do
-    if [[ $i != $REPLICAS ]]; then
-        CONTROLLER_QUORUM_VOTERS="$CONTROLLER_QUORUM_VOTERS$i@kafka-$i.$SERVICE.$NAMESPACE.svc.cluster.local:9093,"
-    else
-        CONTROLLER_QUORUM_VOTERS=${CONTROLLER_QUORUM_VOTERS::-1}
-    fi
-done
+# Let's just create on controller
+CONTROLLER_QUORUM_VOTERS="0@$SERVICE.$NAMESPACE.svc.cluster.local:9093"
+
+
+# Make node zero both controller and broker
+if (( $NODE_ID == 0 )); then
+  PROCESS_ROLES=broker,controller
+  LISTENERS=$LISTENERS_BROKER_CONTROLLER
+else
+  PROCESS_ROLES=broker
+  LISTENERS=$LISTENERS_BROKER_ONLY
+fi
 
 sed -e "s+^node.id=.*+node.id=$NODE_ID+" \
 -e "s+^controller.quorum.voters=.*+controller.quorum.voters=$CONTROLLER_QUORUM_VOTERS+" \
 -e "s+^listeners=.*+listeners=$LISTENERS+" \
 -e "s+^advertised.listeners=.*+advertised.listeners=$ADVERTISED_LISTENERS+" \
 -e "s+^log.dirs=.*+log.dirs=$LOG_DIR+" \
+-e "s+^process.roles=.*+process.roles=$PROCESS_ROLES+" \
 /home/kafka/config/kraft/server.properties > server.properties.updated \
 && mv server.properties.updated /home/kafka/config/kraft/server.properties
 
