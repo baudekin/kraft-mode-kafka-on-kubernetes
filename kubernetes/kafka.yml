@@ -28,7 +28,7 @@ metadata:
   namespace: default
 spec:
   serviceName: kafka-svc
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: kafka-app
@@ -40,7 +40,7 @@ spec:
     spec:
       containers:
         - name: kafka-container
-          image: mbodkin/kafka:1.0.28
+          image: mbodkin/kafka:1.0.37
           ports:
             - containerPort: 9092
             - containerPort: 9093
@@ -67,5 +67,5 @@ spec:
         - ReadWriteOnce
       resources:
         requests:
-          storage: 100Mi
+          storage: 1Gi
       storageClassName: hostpath

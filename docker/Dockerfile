@@ -1,6 +1,9 @@
 # TODO Pass in image as argument
 FROM quay.io/centos/centos:stream8
 
+EXPOSE 9092
+EXPOSE 9093
+
 # TODO Make the following its on build image and
 # copy the relavent pieces to production image
 # upgrade packages
