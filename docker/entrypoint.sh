@@ -7,17 +7,19 @@ ADVERTISED_LISTENERS="PLAINTEXT://kafka-$NODE_ID.$SERVICE.$NAMESPACE.svc.cluster
 
 # Let's just create one controller
 #CONTROLLER_QUORUM_VOTERS="0@kafa-$NODE_ID.$SERVICE.$NAMESPACE.svc.cluster.local:9093"
-CONTROLLER_QUORUM_VOTERS="0@$SERVICE.$NAMESPACE.svc.cluster.local:9093"
+#CONTROLLER_QUORUM_VOTERS="0@$SERVICE.$NAMESPACE.svc.cluster.local:9093"
 
+for (( i=0; i<$REPLICAS ;i++ ))
+do
+  if (( $i == 0 )); then
+    CONTROLLER_QUORUM_VOTERS="$i@kafka-$i.$SERVICE.$NAMESPACE.svc.cluster.local:9093"
+  else
+    CONTROLLER_QUORUM_VOTERS="${CONTROLLER_QUORUM_VOTERS},$i@kafka-$i.$SERVICE.$NAMESPACE.svc.cluster.local:9093"
+  fi
+done
 
-# Make node zero both controller and broker
-if (( $NODE_ID == 0 )); then
-  PROCESS_ROLES=broker,controller
-  LISTENERS=$LISTENERS_BROKER_CONTROLLER
-else
-  PROCESS_ROLES=broker
-  LISTENERS=$LISTENERS_BROKER_ONLY
-fi
+PROCESS_ROLES=broker,controller
+LISTENERS=$LISTENERS_BROKER_CONTROLLER
 
 sed -e "s+^node.id=.*+node.id=$NODE_ID+" \
 -e "s+^controller.quorum.voters=.*+controller.quorum.voters=$CONTROLLER_QUORUM_VOTERS+" \
