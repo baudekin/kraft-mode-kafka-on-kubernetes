@@ -28,7 +28,7 @@ metadata:
   namespace: default
 spec:
   serviceName: kafka-svc
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: kafka-app
