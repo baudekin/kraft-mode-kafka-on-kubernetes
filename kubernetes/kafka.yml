@@ -40,7 +40,7 @@ spec:
     spec:
       containers:
         - name: kafka-container
-          image: mbodkin/kafka:1.0.39
+          image: mbodkin/kafka:1.0.48
           ports:
             - containerPort: 9092
             - containerPort: 9093
