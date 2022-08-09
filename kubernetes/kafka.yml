@@ -28,7 +28,7 @@ metadata:
   namespace: default
 spec:
   serviceName: kafka-svc
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: kafka-app
@@ -40,7 +40,7 @@ spec:
     spec:
       containers:
         - name: kafka-container
-          image: mbodkin/kafka:1.0.70
+          image: mbodkin/kafka:1.0.97
           ports:
             - containerPort: 9092
             - containerPort: 9093
@@ -48,7 +48,7 @@ spec:
             - name: CLUSTER_ID
               value: 'mNvZdBzpR3KCdx-uEAwaEQ'
             - name: REPLICAS
-              value: '3'
+              value: '1'
             - name: SERVICE
               value: kafka-svc
             - name: NAMESPACE

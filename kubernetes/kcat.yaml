@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-kcat-client
+  labels:
+    purpose: hack-s3
+  annotations:
+    sidecar.istio.io/inject: "true"
+spec:
+  containers:
+  - name: kcat
+    image: edenhill/kcat:1.7.1
+    command: ["sh"]
+    args: ["-c", "while sleep 60; do date; done"]
+  restartPolicy: OnFailure
+
