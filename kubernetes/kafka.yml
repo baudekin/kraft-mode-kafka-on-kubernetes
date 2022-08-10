@@ -40,10 +40,17 @@ spec:
     spec:
       containers:
         - name: kafka-container
-          image: mbodkin/kafka:1.0.130
+          image: mbodkin/kafka:1.0.135
           ports:
             - containerPort: 9092
             - containerPort: 9093
+            - containerPort: 8093
+            - containerPort: 9192
+            - containerPort: 9193
+            - containerPort: 8193
+            - containerPort: 9292
+            - containerPort: 9293
+            - containerPort: 8293
           env:
             - name: CLUSTER_ID
               value: 'mNvZdBzpR3KCdx-uEAwaEQ'
