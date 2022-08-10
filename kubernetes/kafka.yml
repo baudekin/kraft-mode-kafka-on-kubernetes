@@ -28,7 +28,7 @@ metadata:
   namespace: default
 spec:
   serviceName: kafka-svc
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: kafka-app
@@ -55,7 +55,7 @@ spec:
             - name: CLUSTER_ID
               value: 'mNvZdBzpR3KCdx-uEAwaEQ'
             - name: REPLICAS
-              value: '2'
+              value: '3'
             - name: SERVICE
               value: kafka-svc
             - name: NAMESPACE
